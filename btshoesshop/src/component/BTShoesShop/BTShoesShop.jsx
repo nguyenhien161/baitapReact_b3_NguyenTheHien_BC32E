@@ -1,5 +1,8 @@
 import React, { Component } from "react";
+import Backet from "./Backet";
 import data from "./data.json";
+import Detail from "./Detail";
+import ShoesShop from "./ShoesShop";
 export default class BTShoesShop extends Component {
   state = {
     shoesShop: {
@@ -14,11 +17,48 @@ export default class BTShoesShop extends Component {
       quantity: 995,
       image: "http://svcy3.myclass.vn/images/adidas-prophere.png",
     },
+    cart: [
+      {
+        id: 2,
+        name: "Adidas Prophere Black White",
+        alias: "adidas-prophere-black-white",
+        price: 450,
+        description:
+          "The adidas Primeknit upper wraps the foot with a supportive fit that enhances movement.\r\n\r\n",
+        shortDescription:
+          "The midsole contains 20% more Boost for an amplified Boost feeling.\r\n\r\n",
+        quantity: 990,
+        image: "http://svcy3.myclass.vn/images/adidas-prophere-black-white.png",
+        soLuong: 1,
+      },
+    ],
+  };
+  handleShoesDefault = (shoes) => {
+    this.setState({
+      shoesShop: shoes,
+    });
+  };
+  handleCart = (shoesClick) => {
+    const value = { ...shoesClick, soLuong: 1 };
+    const data = [...this.state.cart];
+
+    const index = data.findIndex((shoes) => shoes.id === shoesClick.id);
+
+    if (index !== -1) {
+      data[index].soLuong += 1;
+    } else {
+      data.push(value);
+    }
+
+    this.setState({
+      cart: data,
+    });
   };
   render() {
     return (
       <div className="container">
         <h2 className="text-center">ShoesShop</h2>
+        <Backet cart={this.state.cart} />
         <div className="row">
           <div className="col-2">
             <h1>Sidebar</h1>
@@ -32,21 +72,11 @@ export default class BTShoesShop extends Component {
               {data.map((shoes) => {
                 return (
                   <div className="col-4" key={shoes.id}>
-                    <div className="card mb-3">
-                      <img
-                        onClick={() => this.setState({ shoesShop: shoes })}
-                        src={shoes.image}
-                        alt=""
-                      />
-                      <div className="card-body">
-                        <p>{shoes.name}</p>
-                        <p>{shoes.price}</p>
-                        <button className="btn btn-dark text-white">
-                          Add to carts
-                          <i className="ml-3 fa-solid fa-cart-shopping"></i>
-                        </button>
-                      </div>
-                    </div>
+                    <ShoesShop
+                      product={shoes}
+                      handleShoesDefault={this.handleShoesDefault}
+                      handleCart={this.handleCart}
+                    />
                   </div>
                 );
               })}
@@ -54,18 +84,7 @@ export default class BTShoesShop extends Component {
           </div>
         </div>
         <hr />
-        <div className="row mt-5">
-          <div className="col-6">
-            <img src={this.state.shoesShop.image} alt="" />
-          </div>
-          <div className="col-4">
-            <p>Name: {this.state.shoesShop.name}</p>
-            <p>Price: {this.state.shoesShop.price}</p>
-            <p>Description: {this.state.shoesShop.description}</p>
-            <p>Quantity: {this.state.shoesShop.quantity}</p>
-            <button className="btn btn-primary">Buy</button>
-          </div>
-        </div>
+        <Detail shoes={this.state.shoesShop} />
       </div>
     );
   }
